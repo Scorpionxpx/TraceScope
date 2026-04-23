@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraceScope - Analyse PktMon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-shape bg-shape-a"></div>
+  <div class="bg-shape bg-shape-b"></div>
+
+  <main class="container">
+    <header class="hero">
+      <p class="eyebrow">GitHub Pages Ready</p>
+      <h1>TraceScope</h1>
+      <p class="subtitle">Interpreteur visuel pour captures reseau PktMon</p>
+      <p class="note">
+        Ce site fonctionne 100% en local dans votre navigateur. Aucune donnee n est envoyee.
+      </p>
+    </header>
+
+    <section class="upload-card" id="dropZone">
+      <h2>Importer une capture</h2>
+      <p>Glissez un fichier .etl ou .txt ici, ou selectionnez-le manuellement.</p>
+      <input id="fileInput" type="file" accept=".etl,.txt,.log" />
+      <button id="analyzeBtn" class="btn">Analyser</button>
+      <p id="fileName" class="filename">Aucun fichier charge</p>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="help-card" id="conversionHelp" hidden>
+      <h3>Fichier ETL binaire detecte</h3>
+      <p>
+        GitHub Pages ne peut pas decoder directement un ETL binaire. Convertissez d abord le fichier avec PktMon,
+        puis chargez le TXT genere.
+      </p>
+      <pre class="cmd">pktmon etl2txt "capture.etl" -o "capture.txt"</pre>
+    </section>
+
+    <section id="results" hidden>
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <div class="panel two-cols">
+        <div>
+          <h3>Protocoles</h3>
+          <div id="protocolBars" class="bars"></div>
+        </div>
+        <div>
+          <h3>Top IP</h3>
+          <div id="ipBars" class="bars"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="table-header">
+          <h3>Evenements detectes</h3>
+          <div class="table-actions">
+            <select id="quickFilter" aria-label="Filtre rapide">
+              <option value="all">Tous</option>
+              <option value="tcp">TCP</option>
+              <option value="udp">UDP</option>
+              <option value="icmp">ICMP</option>
+              <option value="dns">DNS</option>
+              <option value="drop">Drop</option>
+              <option value="allow">Allow</option>
+              <option value="tx">TX</option>
+              <option value="rx">RX</option>
+            </select>
+            <label class="switch" for="flowOnlyToggle" title="Afficher uniquement les lignes avec IP source et destination">
+              <input id="flowOnlyToggle" type="checkbox" checked />
+              <span class="slider"></span>
+              <span class="switch-text">IP src+dst</span>
+            </label>
+            <input id="tableFilter" type="text" placeholder="Filtrer: tcp, 53, 8.8.8.8, drop..." />
+            <button id="exportBtn" class="btn btn-secondary">Exporter JSON</button>
+          </div>
+        </div>
+        <div class="events-meta" id="eventsMeta"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="index">#</th>
+                <th data-sort="timestamp">Heure</th>
+                <th data-sort="action">Action</th>
+                <th data-sort="protocol">Proto</th>
+                <th data-sort="src">Source</th>
+                <th data-sort="dst">Destination</th>
+                <th data-sort="raw">Ligne brute</th>
+              </tr>
+            </thead>
+            <tbody id="eventsBody"></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <button id="prevPageBtn" class="btn btn-secondary">Precedent</button>
+          <p id="pageInfo">Page 1 / 1</p>
+          <button id="nextPageBtn" class="btn btn-secondary">Suivant</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
